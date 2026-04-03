@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       recipe:
-        description: 'Receta a usar (nombre del archivo en la carpeta recipes)'
+        description: 'Receta a usar (ejemplo: recipe.yml)'
         default: 'recipe.yml'
         required: true
       arch:
-        description: 'Arquitectura (amd64 para tu PC)'
+        description: 'Arquitectura (Usa amd64 para tu PC)'
         default: 'amd64'
         required: true
 
@@ -28,10 +28,10 @@ jobs:
         with:
           recipe: ${{ github.event.inputs.recipe }}
           cli_version: v0.9.4
-          # Esto genera la ISO usando tu carpeta disk-config
           build_disk: true
-          # IMPORTANTE: Aquí se define donde se guarda temporalmente
           output_dir: ./output
+          # Esta línea salta el error de las llaves de firma (cosign)
+          extra_flags: "--no-sign"
 
       - name: Upload ISO as Artifact
         uses: actions/upload-artifact@v4
