@@ -1,1 +1,5 @@
+# Formato minimalista para evitar errores de decodificación
 image = "ghcr.io/sarkval/bazzite-hyperland:latest"
+
+[installer]
+browser = false
