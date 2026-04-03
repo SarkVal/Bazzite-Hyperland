@@ -27,17 +27,13 @@ jobs:
         uses: blue-build/github-action@v1
         with:
           recipe: ${{ github.event.inputs.recipe }}
-          # Usamos la variable de entorno para pasar los comandos que fallaban
-        env:
-          # Esto desactiva la firma y activa la creación de la ISO
-          BLUE_BUILD_BUILD_DISK: "true"
-          BLUE_BUILD_EXTRA_FLAGS: "--no-sign"
+          build_disk: true
+          # ESTA ES LA LÍNEA QUE QUITA EL ERROR DE COSIGN
+          extra_flags: --no-sign
 
       - name: Upload ISO as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: bazzite-hyprland-iso
-          path: |
-            ./output/*.iso
-            ./output/*.sha256
-          if-no-files-found: warn
+          path: ./output/*.iso
+          if-no-files-found: error
