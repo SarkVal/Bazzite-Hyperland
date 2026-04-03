@@ -3,8 +3,6 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: '05 10 * * *'
   push:
     branches:
       - main
@@ -13,65 +11,40 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "Bazzite Hyprland Custom"
-  IMAGE_KEYWORDS: "bazzite,hyprland,nvidia"
-  IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4"
   IMAGE_NAME: "${{ github.event.repository.name }}"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
-  cancel-in-progress: true
 
 jobs:
   build_push:
     name: Build and push image
     runs-on: ubuntu-24.04
-
     permissions:
       contents: read
       packages: write
       id-token: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Prepare environment
         run: |
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Get current date
-        id: date
-        run: echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> $GITHUB_OUTPUT
-
-      - name: Image Metadata
-        uses: docker/metadata-action@v5
-        id: metadata
-        with:
-          tags: |
-            type=raw,value=${{ env.DEFAULT_TAG }}
-            type=raw,value=${{ env.DEFAULT_TAG }}.{{date 'YYYYMMDD'}}
-          labels: |
-            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
-
       - name: Build Image
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
-          containerfiles: |
-            ./Containerfile
+          containerfiles: ./Containerfile
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
+          tags: ${{ env.DEFAULT_TAG }}
           oci: false
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
-        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        if: github.event_name != 'pull_request'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -79,11 +52,10 @@ jobs:
 
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
-        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-        id: push
+        if: github.event_name != 'pull_request'
         with:
           registry: ${{ env.IMAGE_REGISTRY }}
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ steps.metadata.outputs.tags }}
+          tags: ${{ env.DEFAULT_TAG }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
