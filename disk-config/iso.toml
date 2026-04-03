@@ -1,5 +1,1 @@
-# Formato simplificado compatible con las últimas versiones de BlueBuild
 image = "ghcr.io/sarkval/bazzite-hyperland:latest"
-
-[installer]
-browser = false
