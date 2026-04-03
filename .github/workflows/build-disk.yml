@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       recipe:
-        description: 'Nombre de la receta (ej: recipe.yml)'
+        description: 'recipe.yml'
         default: 'recipe.yml'
         required: true
       arch:
-        description: 'Arquitectura (amd64)'
+        description: 'amd64'
         default: 'amd64'
         required: true
 
@@ -28,8 +28,8 @@ jobs:
         with:
           recipe: ${{ github.event.inputs.recipe }}
           build_disk: true
-          # ESTA ES LA LÍNEA QUE QUITA EL ERROR DE COSIGN
-          extra_flags: --no-sign
+          # Usamos este formato que es más agresivo para forzar el salto de firma
+          extra_flags: "--no-sign --pull=always"
 
       - name: Upload ISO as Artifact
         uses: actions/upload-artifact@v4
