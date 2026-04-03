@@ -1,4 +1,3 @@
-# Configuración básica para generar la ISO de Bazzite
 [installer]
 browser = false
 
@@ -6,5 +5,4 @@ browser = false
 image = "/usr/share/backgrounds/bazzite/bazzite-default.png"
 
 [solvers]
-# Esto asegura que use la imagen que acabas de compilar
 image = "ghcr.io/sarkval/bazzite-hyperland:latest"
