@@ -1,8 +1,13 @@
-[installer]
-browser = false
+# Configuración simplificada para evitar errores de llaves desconocidas
+[reproducible]
+# No tocar esto, ayuda a que la ISO sea estable
+display_name = "Bazzite Hyprland Custom"
 
-[background]
-image = "/usr/share/backgrounds/bazzite/bazzite-default.png"
-
-[solvers]
+[images]
+# Aquí va la ruta de tu paquete en GitHub
+# Asegúrate de que el nombre coincida exactamente con lo que ves en la pestaña "Packages"
 image = "ghcr.io/sarkval/bazzite-hyperland:latest"
+
+[installer]
+# Desactivamos el navegador en el instalador para evitar bloqueos
+browser = false
