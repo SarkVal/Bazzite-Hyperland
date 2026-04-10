@@ -32,7 +32,7 @@ jobs:
           extra_flags: "--no-sign --pull=always"
 
       - name: Upload ISO as Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bazzite-hyprland-iso
           path: ./output/*.iso
